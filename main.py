@@ -48,7 +48,7 @@ def bar_shuffle(bar_list):
     for i in range(len(values)):
         bar_list[i].set_height(values[i])
 
-def insert(bar_list):
+def insert_sort(bar_list):
         for i in range(1, len(bar_list)):
             key = bar_list[i].value
             k = i - 1
@@ -62,6 +62,26 @@ def insert(bar_list):
                 pygame.display.update()
 
             bar_list[k + 1].set_height(key)
+
+def selection_sort(bar_list):
+    for i in range(len(bar_list)):
+        value_min = i
+
+        for k in range(i + 1, len(bar_list)):
+            if bar_list[k].value < bar_list[value_min].value:
+                value_min = k
+
+            window_updates(bar_list)
+            pygame.draw.rect(window, (0, 200, 0), bar_list[value_min].rect)
+            pygame.draw.rect(window, (200, 0, 0), bar_list[k].rect)
+            pygame.draw.rect(window, (0, 0, 200), bar_list[i].rect)
+            pygame.display.update()
+
+        aux = bar_list[i].value
+        bar_list[i].set_height(bar_list[value_min].value)
+        bar_list[value_min].set_height(aux)
+        
+
 
 def window_updates(bar_list):
     window.fill((0, 0, 0))
@@ -111,7 +131,8 @@ def main():
             if shuffle_button.click(event, mx, my):
                 bar_shuffle(bar_list)
             if sort_button.click(event, mx, my):
-                insert(bar_list)
+                #insert_sort(bar_list)
+                selection_sort(bar_list)
 
         draw_bars(bar_list)
         draw_background()
