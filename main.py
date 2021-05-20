@@ -1,6 +1,7 @@
 import pygame, sys
 from bar import Bar
 from random import shuffle
+from button import Button
 
 pygame.init()
 
@@ -8,6 +9,7 @@ WINDOW_SIZE = (640, 480)
 
 pygame.display.set_caption('Sorting Algorithms')
 window = pygame.display.set_mode(WINDOW_SIZE)
+
 
 def bars_init(x, y, width, size):
     bar_list = []
@@ -23,6 +25,14 @@ def bars_init(x, y, width, size):
 def draw_bars(bar_list):
     for i in range(len(bar_list)):
         bar_list[i].draw(window)
+
+def draw_text(text, surface, size, color, pos):
+    font = pygame.font.SysFont('calibri', size)
+    text_render = font.render(text, 1, color)
+    text_rect = text_render.get_rect()
+    text_rect.center = pos
+    surface.blit(text_render, text_rect)
+
 
 def get_values(bar_list):
     values = []
@@ -48,43 +58,65 @@ def insert(bar_list):
                 k -= 1
 
                 window_updates(bar_list)
+                pygame.draw.rect(window, (0, 200, 0), bar_list[k+1]. rect)
+                pygame.display.update()
 
             bar_list[k + 1].set_height(key)
 
 def window_updates(bar_list):
     window.fill((0, 0, 0))
     draw_bars(bar_list)
-    pygame.display.update()
+    draw_background()
 
     for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
+    draw_text('Sorting...', window, round(WINDOW_SIZE[0] * WINDOW_SIZE[1] * 0.000075), (200, 200, 200), (window.get_rect().center[0], WINDOW_SIZE[1] * 0.9))
+    
+    pygame.time.Clock().tick(300)
+
+def draw_background():
+    pygame.draw.rect(window, (100, 100, 100), (0, WINDOW_SIZE[1] * 0.799, WINDOW_SIZE[0], WINDOW_SIZE[1] * 0.02))
+    pygame.draw.rect(window, (50, 50, 200), (0, WINDOW_SIZE[1] * 0.81, WINDOW_SIZE[0], WINDOW_SIZE[1] - (WINDOW_SIZE[1] * 0.1)))
+
+
 def main():
 
     fps = 60
     time = pygame.time.Clock()
 
-    bar_quant = 100
+    bar_quant = 90
     bar_width = WINDOW_SIZE[0]/bar_quant
-    bar_list = bars_init(0, WINDOW_SIZE[1], bar_width, bar_quant)
+    bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
 
-    bar_shuffle(bar_list)
+    shuffle_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.83, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
+    shuffle_button = Button(shuffle_button_rect, text= 'Shuffle')
 
-    insert(bar_list)
+    sort_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.92, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
+    sort_button = Button(sort_button_rect, text= 'Sort')
 
     loop = True
     while loop:
 
         window.fill((0, 0, 0))
 
+        mx, my = pygame.mouse.get_pos()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        
+            if shuffle_button.click(event, mx, my):
+                bar_shuffle(bar_list)
+            if sort_button.click(event, mx, my):
+                insert(bar_list)
+
         draw_bars(bar_list)
+        draw_background()
+        shuffle_button.draw(window)
+        sort_button.draw(window)
         pygame.display.update()
         time.tick(fps)
 
