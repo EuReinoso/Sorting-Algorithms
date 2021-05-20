@@ -109,6 +109,24 @@ def bubble_sort(bar_list):
             
         n -= 1
 
+def comb_sort(bar_list):
+    gap = round(len(bar_list)// 1.3)
+    i = 0
+    while gap > 0 & i < len(bar_list) - 1:
+        i = 0
+        while i + gap < len(bar_list):
+            if bar_list[i].value > bar_list[i + gap].value:
+                bar_swap(bar_list[i], bar_list[i + gap])
+
+            window_updates(bar_list)
+            pygame.draw.rect(window, (200, 0, 0),  bar_list[i].rect)
+            pygame.draw.rect(window, (200, 0, 0),  bar_list[i + gap].rect)
+            pygame.display.update()
+
+            i += 1
+        gap = round(gap // 1.3)
+
+
 def window_updates(bar_list):
     window.fill((0, 0, 0))
     draw_bars(bar_list)
@@ -145,8 +163,9 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(3, algorithms_buttons_pos, algorithms_buttons_size, texts= ['Insert', 'Selection', 'Bubble'], space= 20)
-    
+    algorithms_buttons = buttons_sequence(4, algorithms_buttons_pos, algorithms_buttons_size, texts= ['Insert', 'Selection', 'Bubble', 'Comb'], space= 20)
+    algorithms_buttons[0].selected = True
+
     algorithm_name = 'Insert'
     loop = True
     while loop:
@@ -168,6 +187,8 @@ def main():
                     selection_sort(bar_list)
                 if algorithm_name == 'Bubble':
                     bubble_sort(bar_list)
+                if algorithm_name == 'Comb':
+                    comb_sort(bar_list)
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
