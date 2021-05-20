@@ -3,18 +3,27 @@ import pygame
 pygame.init()
 
 class Button:
-    def __init__(self, rect, color= (100, 100, 100), text= '', text_color= (200, 200, 200)):
+    def __init__(self, rect, color= (100, 100, 100), selected_color= (0, 100, 0), text= '', text_color= (200, 200, 200), text_size= None):
         self.rect = rect
         self.color = color
+        self.selected_color = selected_color
         self.text = text
-        self.text_size = round(rect.height * rect.width * 0.0065)
+
+        if text_size == None:
+            self.text_size = round(rect.height * rect.width * 0.005)
+        else:
+            self.text_size = text_size
+
         self.text_color = text_color
         self.on_down = False
         self.on_up = False
         self.selected = False
 
     def draw(self, window):
-        pygame.draw.rect(window, self.color, self.rect)
+        if not self.selected:
+            pygame.draw.rect(window, self.color, self.rect)
+        else:
+            pygame.draw.rect(window, self.selected_color, self.rect)
         if self.text != '':
             self.draw_text(window)
 
