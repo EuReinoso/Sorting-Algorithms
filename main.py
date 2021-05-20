@@ -5,7 +5,8 @@ from button import Button
 
 pygame.init()
 
-WINDOW_SIZE = (640, 480)
+WINDOW_SIZE = (1024, 768)
+#WINDOW_SIZE = (640, 480)
 
 pygame.display.set_caption('Sorting Algorithms')
 window = pygame.display.set_mode(WINDOW_SIZE)
@@ -53,6 +54,15 @@ def bar_swap(bar1, bar2):
     bar1.set_height(bar2.value)
     bar2.set_height(aux)
 
+def buttons_sequence(quant, pos, size, space= 30, texts= []):
+    buttons = []
+    for i in range(quant):
+        rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
+        button = Button(rect, text= texts[i])
+        buttons.append(button)
+        pos[0] += size[0] + space
+    
+    return buttons
 
 def insert_sort(bar_list):
         for i in range(1, len(bar_list)):
@@ -133,6 +143,11 @@ def main():
     sort_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.92, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
     sort_button = Button(sort_button_rect, text= 'Sort')
 
+    algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
+    algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
+    algorithms_buttons = buttons_sequence(3, algorithms_buttons_pos, algorithms_buttons_size, texts= ['Insert', 'Selection', 'Bubble'], space= 20)
+    
+    algorithm_name = 'Insert'
     loop = True
     while loop:
 
@@ -147,12 +162,28 @@ def main():
             if shuffle_button.click(event, mx, my):
                 bar_shuffle(bar_list)
             if sort_button.click(event, mx, my):
-                #insert_sort(bar_list)
-                #selection_sort(bar_list)
-                bubble_sort(bar_list)
+                if algorithm_name == 'Insert':
+                    insert_sort(bar_list)
+                if algorithm_name == 'Selection':
+                    selection_sort(bar_list)
+                if algorithm_name == 'Bubble':
+                    bubble_sort(bar_list)
+                
+            for i in range(len(algorithms_buttons)):
+                if algorithms_buttons[i].click(event, mx, my):
+                    algorithm_name = algorithms_buttons[i].text
+                    algorithms_buttons[i].selected = True
+
+                    for b in range(len(algorithms_buttons)):
+                        if algorithms_buttons[b] != algorithms_buttons[i]:
+                            algorithms_buttons[b].selected = False
 
         draw_bars(bar_list)
         draw_background()
+
+        for button in algorithms_buttons:
+            button.draw(window)
+
         shuffle_button.draw(window)
         sort_button.draw(window)
         pygame.display.update()
