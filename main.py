@@ -110,11 +110,10 @@ def bubble_sort(bar_list):
         n -= 1
 
 def comb_sort(bar_list):
-    gap = round(len(bar_list)// 1.3)
-    i = 0
-    while gap > 0 & i < len(bar_list) - 1:
-        i = 0
-        while i + gap < len(bar_list):
+    gap = len(bar_list)
+    while gap > 1:
+        gap = max(1, int(gap/ 1.25))
+        for i in range(len(bar_list) - gap):
             if bar_list[i].value > bar_list[i + gap].value:
                 bar_swap(bar_list[i], bar_list[i + gap])
 
@@ -123,8 +122,6 @@ def comb_sort(bar_list):
             pygame.draw.rect(window, (200, 0, 0),  bar_list[i + gap].rect)
             pygame.display.update()
 
-            i += 1
-        gap = round(gap // 1.3)
 
 
 def window_updates(bar_list):
@@ -151,7 +148,7 @@ def main():
     fps = 60
     time = pygame.time.Clock()
 
-    bar_quant = 90
+    bar_quant = 80
     bar_width = WINDOW_SIZE[0]/bar_quant
     bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
 
