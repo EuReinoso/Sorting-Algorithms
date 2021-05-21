@@ -23,7 +23,7 @@ def bars_init(x, y, width, size):
         height += height_increment
     return bar_list
 
-def draw_bars(bar_list):
+def draw_bars():
     for i in range(len(bar_list)):
         bar_list[i].draw(window)
 
@@ -64,7 +64,7 @@ def buttons_sequence(quant, pos, size, space= 30, texts= []):
     
     return buttons
 
-def insert_sort(bar_list):
+def insert_sort():
         for i in range(1, len(bar_list)):
             key = bar_list[i].value
             k = i - 1
@@ -79,7 +79,7 @@ def insert_sort(bar_list):
 
             bar_list[k + 1].set_height(key)
 
-def selection_sort(bar_list):
+def selection_sort():
     for i in range(len(bar_list)):
         value_min = i
 
@@ -95,7 +95,7 @@ def selection_sort(bar_list):
 
         bar_swap(bar_list[i], bar_list[value_min])
 
-def bubble_sort(bar_list):
+def bubble_sort():
     n = len(bar_list) - 1
     while n > 0:
         for i in range(n):
@@ -109,7 +109,7 @@ def bubble_sort(bar_list):
             
         n -= 1
 
-def comb_sort(bar_list):
+def comb_sort():
     gap = len(bar_list)
     while gap > 1:
         gap = max(1, int(gap/ 1.25))
@@ -123,10 +123,9 @@ def comb_sort(bar_list):
             pygame.display.update()
 
 
-
 def window_updates(bar_list):
     window.fill((0, 0, 0))
-    draw_bars(bar_list)
+    draw_bars()
     draw_background()
 
     for event in pygame.event.get():
@@ -143,14 +142,15 @@ def draw_background():
     pygame.draw.rect(window, (50, 50, 200), (0, WINDOW_SIZE[1] * 0.81, WINDOW_SIZE[0], WINDOW_SIZE[1] - (WINDOW_SIZE[1] * 0.1)))
 
 
+bar_quant = 80
+bar_width = WINDOW_SIZE[0]/bar_quant
+bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
+
+
 def main():
 
     fps = 60
     time = pygame.time.Clock()
-
-    bar_quant = 80
-    bar_width = WINDOW_SIZE[0]/bar_quant
-    bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
 
     shuffle_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.83, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
     shuffle_button = Button(shuffle_button_rect, text= 'Shuffle')
@@ -160,7 +160,7 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(4, algorithms_buttons_pos, algorithms_buttons_size, texts= ['Insert', 'Selection', 'Bubble', 'Comb'], space= 20)
+    algorithms_buttons = buttons_sequence(5, algorithms_buttons_pos, algorithms_buttons_size, texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Heap'], space= 20)
     algorithms_buttons[0].selected = True
 
     algorithm_name = 'Insert'
@@ -179,13 +179,16 @@ def main():
                 bar_shuffle(bar_list)
             if sort_button.click(event, mx, my):
                 if algorithm_name == 'Insert':
-                    insert_sort(bar_list)
+                    insert_sort()
                 if algorithm_name == 'Selection':
-                    selection_sort(bar_list)
+                    selection_sort()
                 if algorithm_name == 'Bubble':
-                    bubble_sort(bar_list)
+                    bubble_sort()
                 if algorithm_name == 'Comb':
-                    comb_sort(bar_list)
+                    comb_sort()
+                if algorithm_name == 'Heap':
+                    values = get_values(bar_list)
+                    heapsort(values)
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
@@ -196,7 +199,7 @@ def main():
                         if algorithms_buttons[b] != algorithms_buttons[i]:
                             algorithms_buttons[b].selected = False
 
-        draw_bars(bar_list)
+        draw_bars()
         draw_background()
 
         for button in algorithms_buttons:
