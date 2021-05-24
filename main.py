@@ -54,13 +54,21 @@ def bar_swap(bar1, bar2):
     bar1.set_height(bar2.value)
     bar2.set_height(aux)
 
-def buttons_sequence(quant, pos, size, space= 30, texts= []):
+def buttons_sequence(quant, pos, size, space_x= 30,space_y= 10, texts= [], break_point= 4):
     buttons = []
+    pos_x_init = pos[0]
+    count = 0
     for i in range(quant):
         rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         button = Button(rect, text= texts[i])
         buttons.append(button)
-        pos[0] += size[0] + space
+        pos[0] = pos[0] + size[0] + space_x
+
+        count += 1
+        if count > break_point:
+            pos[0] = pos_x_init
+            pos[1] = pos[1] + size[1] + space_y
+            count = 0
     
     return buttons
 
@@ -169,6 +177,67 @@ def merge_sort(start, values):
             window_updates()
             pygame.display.update()
 
+def  heapify(values, n, i):
+    largest = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+
+    if l < n and values[largest] < values[l]:
+        largest = l
+    
+    if r < n and values[largest] < values[r]:
+        largest = r
+    
+    if largest != i:
+        values[i], values[largest] = values[largest], values[i]
+        bar_list[i].set_height(values[i])
+        bar_list[largest].set_height(values[largest])
+
+        window_updates()
+        pygame.draw.rect(window, (200, 0, 0), bar_list[i].rect)
+        pygame.draw.rect(window, (200, 0, 0), bar_list[largest].rect)
+        pygame.display.update()
+
+        heapify(values, n, largest)
+
+def heap_sort(values):
+    n = len(values)
+
+    for i in range(n//2 - 1, -1, -1):
+        heapify(values, n, i)
+    
+    for i in range(n - 1, 0, -1):
+        values[i], values[0] = values[0], values[i]
+        bar_list[i].set_height(values[i])
+        bar_list[0].set_height(values[0])
+
+        window_updates()
+        pygame.display.update()
+
+        heapify(values, i, 0)
+
+def shell_sort(values):
+    n = len(values)
+    gap = n//2
+
+    while gap > 0:
+        for i in range(gap, n):
+            temp = values[i]
+            j = i
+            while j >= gap and values[j - gap] > temp:
+                values[j] = values[j - gap]
+                bar_list[j].set_height(values[j])
+
+                window_updates()
+                pygame.draw.rect(window, (200, 0, 0), bar_list[j].rect)
+                pygame.draw.rect(window, (0, 200, 0), bar_list[i].rect)
+                pygame.display.update()
+
+                j -= gap
+            values[j] = temp
+            bar_list[j].set_height(values[j])
+
+        gap = gap//2
 
 
 def window_updates():
@@ -190,7 +259,7 @@ def draw_background():
     pygame.draw.rect(window, (50, 50, 200), (0, WINDOW_SIZE[1] * 0.81, WINDOW_SIZE[0], WINDOW_SIZE[1] - (WINDOW_SIZE[1] * 0.1)))
 
 
-bar_quant = 100
+bar_quant = int(WINDOW_SIZE[0] * 0.2)
 bar_width = WINDOW_SIZE[0]/bar_quant
 bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
 
@@ -208,7 +277,9 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(5, algorithms_buttons_pos, algorithms_buttons_size, texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge'], space= 20)
+    algorithms_buttons = buttons_sequence(7, algorithms_buttons_pos, algorithms_buttons_size, 
+                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell'], 
+                                        space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003)
     algorithms_buttons[0].selected = True
 
     algorithm_name = 'Insert'
@@ -237,6 +308,12 @@ def main():
                 if algorithm_name == 'Merge':
                     values = get_values(bar_list)
                     merge_sort(0, values)
+                if algorithm_name == 'Heap':
+                    values = get_values(bar_list)
+                    heap_sort(values)
+                if algorithm_name == 'Shell':
+                    values = get_values(bar_list)
+                    shell_sort(values)
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
