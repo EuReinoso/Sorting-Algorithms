@@ -240,6 +240,45 @@ def shell_sort(values):
 
         gap = gap//2
 
+def counting_sort(values, exp1):
+    n = len(values)
+
+    output = [0] * n
+    count = [0] * (10)
+
+    for i in range(0, n):
+        index = (values[i] / exp1)
+        count[int(index % 10)] += 1
+
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    i = n - 1
+    while i >= 0:
+        index = (values[i] / exp1)
+        output[count[int(index % 10)] - 1] = values[i]
+        count[int(index % 10)] -= 1
+        i -= 1
+       
+    for i in range(0, len(values)):
+        values[i] = output[i]
+        bar_list[i].set_height(values[i])
+
+        window_updates()
+        pygame.draw.rect(window, (200, 0, 0), bar_list[i].rect)
+        pygame.display.update()
+
+def radix_sort(values):
+    max1 = max(values)
+    exp = 1
+
+    while max1 / exp > 1:
+        counting_sort(values, exp)
+        exp *= 10
+
+        print(max1/ exp)
+
+
 
 def window_updates():
     window.fill((0, 0, 0))
@@ -279,8 +318,8 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(7, algorithms_buttons_pos, algorithms_buttons_size, 
-                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell'], 
+    algorithms_buttons = buttons_sequence(8, algorithms_buttons_pos, algorithms_buttons_size, 
+                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix'], 
                                         space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 4)
     algorithms_buttons[0].selected = True
 
@@ -323,6 +362,9 @@ def main():
                 if algorithm_name == 'Shell':
                     values = get_values(bar_list)
                     shell_sort(values)
+                if algorithm_name == 'Radix':
+                    values = get_values(bar_list)
+                    radix_sort(values)
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
