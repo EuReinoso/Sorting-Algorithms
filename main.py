@@ -5,8 +5,8 @@ from button import Button
 
 pygame.init()
 
-WINDOW_SIZE = (1024, 768)
-#WINDOW_SIZE = (640, 480)
+#WINDOW_SIZE = (800, 600)
+WINDOW_SIZE = (640, 480)
 
 pygame.display.set_caption('Sorting Algorithms')
 window = pygame.display.set_mode(WINDOW_SIZE)
@@ -54,7 +54,7 @@ def bar_swap(bar1, bar2):
     bar1.set_height(bar2.value)
     bar2.set_height(aux)
 
-def buttons_sequence(quant, pos, size, space_x= 30,space_y= 10, texts= [], break_point= 4):
+def buttons_sequence(quant, pos, size, space_x= 30,space_y= 10, texts= [], break_point= None):
     buttons = []
     pos_x_init = pos[0]
     count = 0
@@ -64,12 +64,13 @@ def buttons_sequence(quant, pos, size, space_x= 30,space_y= 10, texts= [], break
         buttons.append(button)
         pos[0] = pos[0] + size[0] + space_x
 
-        count += 1
-        if count > break_point:
-            pos[0] = pos_x_init
-            pos[1] = pos[1] + size[1] + space_y
-            count = 0
-    
+        if break_point != None:
+            count += 1
+            if count > break_point:
+                pos[0] = pos_x_init
+                pos[1] = pos[1] + size[1] + space_y
+                count = 0
+        
     return buttons
 
 def insert_sort():
@@ -265,6 +266,7 @@ bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
 
 
 def main():
+    global bar_list, bar_width, bar_quant
 
     fps = 60
     time = pygame.time.Clock()
@@ -279,8 +281,15 @@ def main():
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
     algorithms_buttons = buttons_sequence(7, algorithms_buttons_pos, algorithms_buttons_size, 
                                         texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell'], 
-                                        space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003)
+                                        space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 4)
     algorithms_buttons[0].selected = True
+
+    bar_buttons_pos = [WINDOW_SIZE[0] * 0.58, WINDOW_SIZE[1] * 0.83]
+    bar_buttons_size = (WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.04)
+    bar_buttons = buttons_sequence(4, bar_buttons_pos, bar_buttons_size,
+                                texts= ['Small', 'Medium', 'Large', 'Very Large'],
+                                space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 0)
+    bar_buttons[1].selected = True
 
     algorithm_name = 'Insert'
     loop = True
@@ -323,11 +332,40 @@ def main():
                     for b in range(len(algorithms_buttons)):
                         if algorithms_buttons[b] != algorithms_buttons[i]:
                             algorithms_buttons[b].selected = False
+            
+            for i in range(len(bar_buttons)):
+                if bar_buttons[i].click(event, mx, my):
+                    bar_buttons[i].selected = True
+
+                    for b in range(len(bar_buttons)):
+                        if bar_buttons[b] != bar_buttons[i]:
+                            bar_buttons[b].selected = False
+                    
+                    if bar_buttons[i].text == 'Small':
+                        bar_quant = int(WINDOW_SIZE[0] * 0.05)
+                        bar_width = WINDOW_SIZE[0]/bar_quant
+                        bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
+                    if bar_buttons[i].text == 'Medium':
+                        bar_quant = int(WINDOW_SIZE[0] * 0.2)
+                        bar_width = WINDOW_SIZE[0]/bar_quant
+                        bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
+                    if bar_buttons[i].text == 'Large':
+                        bar_quant = int(WINDOW_SIZE[0] * 0.5)
+                        bar_width = WINDOW_SIZE[0]/bar_quant
+                        bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
+                    if bar_buttons[i].text == 'Very Large':
+                        bar_quant = int(WINDOW_SIZE[0] * 0.8)
+                        bar_width = WINDOW_SIZE[0]/bar_quant
+                        bar_list = bars_init(0, WINDOW_SIZE[1] * 0.8, bar_width, bar_quant)
+
 
         draw_bars()
         draw_background()
 
         for button in algorithms_buttons:
+            button.draw(window)
+        
+        for button in bar_buttons:
             button.draw(window)
 
         shuffle_button.draw(window)
