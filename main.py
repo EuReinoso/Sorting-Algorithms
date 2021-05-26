@@ -278,6 +278,24 @@ def radix_sort(values):
 
         print(max1/ exp)
 
+def gnome_sort(values, n):
+    index = 0
+    while index < n:
+        if index == 0:
+            index += 1
+        if values[index] >= values[index- 1]:
+            index += 1
+        else:
+            values[index], values[index - 1] = values[index - 1], values[index]
+            bar_list[index].set_height(values[index])
+            bar_list[index - 1].set_height(values[index - 1])
+            
+            window_updates()
+            pygame.draw.rect(window, (200, 0, 0), bar_list[index].rect)
+            pygame.display.update()
+            
+            index -= 1
+
 
 
 def window_updates():
@@ -318,8 +336,8 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(8, algorithms_buttons_pos, algorithms_buttons_size, 
-                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix'], 
+    algorithms_buttons = buttons_sequence(9, algorithms_buttons_pos, algorithms_buttons_size, 
+                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome'],
                                         space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 4)
     algorithms_buttons[0].selected = True
 
@@ -365,6 +383,9 @@ def main():
                 if algorithm_name == 'Radix':
                     values = get_values(bar_list)
                     radix_sort(values)
+                if algorithm_name == 'Gnome':
+                    values = get_values(bar_list)
+                    gnome_sort(values, len(values))
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
