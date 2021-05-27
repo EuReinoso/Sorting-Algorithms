@@ -296,7 +296,23 @@ def gnome_sort(values, n):
             
             index -= 1
 
+def counting_sort(values, vmax):
+    m = vmax + 1
+    count = [0] * m                
+    
+    for a in values:
+        count[a] += 1      
 
+    i = 0
+    for a in range(m):            
+        for _ in range(count[a]):  
+            values[i] = a
+            bar_list[i].set_height(values[i])
+
+            window_updates()
+            pygame.display.update()
+            
+            i += 1
 
 def window_updates():
     window.fill((0, 0, 0))
@@ -336,8 +352,8 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(9, algorithms_buttons_pos, algorithms_buttons_size, 
-                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome'],
+    algorithms_buttons = buttons_sequence(10, algorithms_buttons_pos, algorithms_buttons_size, 
+                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome', 'Counting'],
                                         space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 4)
     algorithms_buttons[0].selected = True
 
@@ -386,6 +402,9 @@ def main():
                 if algorithm_name == 'Gnome':
                     values = get_values(bar_list)
                     gnome_sort(values, len(values))
+                if algorithm_name == 'Counting':
+                    values = get_values(bar_list)
+                    counting_sort(values, max(values))
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
