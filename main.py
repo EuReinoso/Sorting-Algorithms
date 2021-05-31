@@ -73,20 +73,24 @@ def buttons_sequence(quant, pos, size, space_x= 30,space_y= 10, texts= [], break
         
     return buttons
 
-def insert_sort():
-        for i in range(1, len(bar_list)):
-            key = bar_list[i].value
+def insert_sort(values):
+        for i in range(1, len(values)):
+            key = values[i]
             k = i - 1
-            while k >= 0 and key < bar_list[k].value:
-                value = bar_list[k].value
-                bar_list[k + 1].set_height(value)
+            while k >= 0 and values[k] > key:
+                values[k + 1] = values[k]
+                bar_list[k + 1].set_height(values[k])
                 k -= 1
 
                 window_updates()
                 pygame.draw.rect(window, (0, 200, 0), bar_list[k+1]. rect)
                 pygame.display.update()
 
-            bar_list[k + 1].set_height(key)
+            values[k + 1] = key
+            bar_list[k + 1].set_height(values[k + 1])
+        
+        return values
+
 
 def selection_sort():
     for i in range(len(bar_list)):
@@ -310,9 +314,37 @@ def counting_sort(values, vmax):
             bar_list[i].set_height(values[i])
 
             window_updates()
+            pygame.draw.rect(window, (200, 0, 0), bar_list[i].rect)
             pygame.display.update()
             
             i += 1
+
+def bucket_sort(values):
+    max_value = max(values)
+    size = max_value/len(values)
+
+    buckets_list= []
+    for x in range(len(values)):
+        buckets_list.append([]) 
+
+    for i in range(len(values)):
+        j = int (values[i] / size)
+        if j != len (values):
+            buckets_list[j].append(values[i])
+        else:
+            buckets_list[len(values) - 1].append(values[i])
+
+    k = 0
+    for i in range(len(values)):
+        for j in range(len(buckets_list[i])):
+            values[k] = buckets_list[i][j]
+            bar_list[k].set_height(values[k])
+
+            window_updates()
+            pygame.draw.rect(window, (200, 0, 0), bar_list[k].rect)
+            pygame.display.update()
+
+            k += 1
 
 def window_updates():
     window.fill((0, 0, 0))
@@ -352,8 +384,8 @@ def main():
 
     algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
     algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
-    algorithms_buttons = buttons_sequence(10, algorithms_buttons_pos, algorithms_buttons_size, 
-                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome', 'Counting'],
+    algorithms_buttons = buttons_sequence(11, algorithms_buttons_pos, algorithms_buttons_size, 
+                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome', 'Counting', 'Bucket'],
                                         space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 4)
     algorithms_buttons[0].selected = True
 
@@ -380,7 +412,8 @@ def main():
                 bar_shuffle(bar_list)
             if sort_button.click(event, mx, my):
                 if algorithm_name == 'Insert':
-                    insert_sort()
+                    values = get_values(bar_list)
+                    insert_sort(values)
                 if algorithm_name == 'Selection':
                     selection_sort()
                 if algorithm_name == 'Bubble':
@@ -405,6 +438,9 @@ def main():
                 if algorithm_name == 'Counting':
                     values = get_values(bar_list)
                     counting_sort(values, max(values))
+                if algorithm_name == 'Bucket':
+                    values = get_values(bar_list)
+                    bucket_sort(values)
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
