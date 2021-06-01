@@ -346,6 +346,53 @@ def bucket_sort(values):
 
             k += 1
 
+def cocktail_sort(values):
+    n = len(values)
+    swapped = True
+    start = 0
+    end = n-1
+    while (swapped==True):
+  
+        swapped = False
+  
+        for i in range (start, end):
+            if (values[i] > values[i+1]) :
+                values[i], values[i+1]= values[i+1], values[i]
+                
+                bar_list[i].set_height(values[i])
+                bar_list[i + 1].set_height(values[i + 1])
+
+                window_updates()
+                pygame.draw.rect(window, (200, 0, 0), bar_list[i].rect)
+                pygame.draw.rect(window, (200, 0, 0), bar_list[i + 1].rect)
+                pygame.display.update()
+
+                swapped=True
+  
+        if (swapped==False):
+            break
+  
+        swapped = False
+  
+        end = end-1
+  
+        for i in range(end-1, start-1,-1):
+            if (values[i] > values[i+1]):
+                values[i], values[i+1] = values[i+1], values[i]
+
+                bar_list[i].set_height(values[i])
+                bar_list[i + 1].set_height(values[i + 1])
+
+                window_updates()
+                pygame.draw.rect(window, (200, 0, 0), bar_list[i].rect)
+                pygame.draw.rect(window, (200, 0, 0), bar_list[i + 1].rect)
+                pygame.display.update()
+
+
+                swapped = True
+  
+        start = start+1
+
 def window_updates():
     window.fill((0, 0, 0))
     draw_bars()
@@ -376,20 +423,20 @@ def main():
     fps = 60
     time = pygame.time.Clock()
 
-    shuffle_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.83, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
+    shuffle_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.82, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
     shuffle_button = Button(shuffle_button_rect, text= 'Shuffle')
 
     sort_button_rect = pygame.Rect(WINDOW_SIZE[0] * 0.75, WINDOW_SIZE[1] * 0.92, WINDOW_SIZE[0] * 0.2, WINDOW_SIZE[1] * 0.07)
     sort_button = Button(sort_button_rect, text= 'Sort')
 
-    algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.83]
-    algorithms_buttons_size = (WINDOW_SIZE[0] * 0.09, WINDOW_SIZE[1] * 0.07)
+    algorithms_buttons_pos = [WINDOW_SIZE[0] * 0.05, WINDOW_SIZE[1] * 0.82]
+    algorithms_buttons_size = (WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.05)
     algorithms_buttons = buttons_sequence(11, algorithms_buttons_pos, algorithms_buttons_size, 
-                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome', 'Counting', 'Bucket'],
+                                        texts= ['Insert', 'Selection', 'Bubble', 'Comb', 'Merge', 'Heap', 'Shell', 'Radix', 'Gnome', 'Counting','Cocktail'],
                                         space_x= WINDOW_SIZE[0] * 0.003, space_y= WINDOW_SIZE[1] * 0.003, break_point= 4)
     algorithms_buttons[0].selected = True
 
-    bar_buttons_pos = [WINDOW_SIZE[0] * 0.58, WINDOW_SIZE[1] * 0.83]
+    bar_buttons_pos = [WINDOW_SIZE[0] * 0.61, WINDOW_SIZE[1] * 0.82]
     bar_buttons_size = (WINDOW_SIZE[0] * 0.1, WINDOW_SIZE[1] * 0.04)
     bar_buttons = buttons_sequence(4, bar_buttons_pos, bar_buttons_size,
                                 texts= ['Small', 'Medium', 'Large', 'Very Large'],
@@ -438,9 +485,9 @@ def main():
                 if algorithm_name == 'Counting':
                     values = get_values(bar_list)
                     counting_sort(values, max(values))
-                if algorithm_name == 'Bucket':
+                if algorithm_name == 'Cocktail':
                     values = get_values(bar_list)
-                    bucket_sort(values)
+                    cocktail_sort(values)
                 
             for i in range(len(algorithms_buttons)):
                 if algorithms_buttons[i].click(event, mx, my):
