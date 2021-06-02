@@ -280,8 +280,6 @@ def radix_sort(values):
         counting_sort(values, exp)
         exp *= 10
 
-        print(max1/ exp)
-
 def gnome_sort(values, n):
     index = 0
     while index < n:
@@ -300,7 +298,7 @@ def gnome_sort(values, n):
             
             index -= 1
 
-def counting_sort(values, vmax):
+def count_sort(values, vmax):
     m = vmax + 1
     count = [0] * m                
     
@@ -584,7 +582,7 @@ def main():
                     gnome_sort(values, len(values))
                 if algorithm_name == 'Counting':
                     values = get_values(bar_list)
-                    counting_sort(values, max(values))
+                    count_sort(values, max(values))
                 if algorithm_name == 'Cocktail':
                     values = get_values(bar_list)
                     cocktail_sort(values)
