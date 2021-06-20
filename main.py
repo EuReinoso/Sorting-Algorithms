@@ -5,8 +5,8 @@ from button import Button
 
 pygame.init()
 
-#WINDOW_SIZE = (800, 600)
-WINDOW_SIZE = (640, 480)
+WINDOW_SIZE = (960, 720)
+#WINDOW_SIZE = (640, 480)
 
 pygame.display.set_caption('Sorting Algorithms')
 window = pygame.display.set_mode(WINDOW_SIZE)
